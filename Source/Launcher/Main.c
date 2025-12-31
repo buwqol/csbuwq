@@ -3,20 +3,13 @@
 #include <windows.h>
 
 #if !defined(DEDICATED)
-
 __declspec(dllexport) DWORD NvOptimusEnablement = 1;
 __declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
-
 __declspec(dllexport) bool BSecureAllowed(unsigned char *p0, int i1, int i2) { return true; }
-
 __declspec(dllexport) int CountFilesCompletedTrustCheck() { return 0; }
-
 __declspec(dllexport) int CountFilesNeedTrustCheck() { return 0; }
-
 __declspec(dllexport) int GetTotalFilesLoaded() { return 0; }
-
 __declspec(dllexport) int RuntimeCheck(int i0, int i1) { return 0; }
-
 #endif
 
 #if defined(DEDICATED)
@@ -52,15 +45,7 @@ static const wchar_t *LastErrorString()
 
 	int error = GetLastError();
 
-	int result = FormatMessageW(
-		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_MAX_WIDTH_MASK,
-		NULL,
-		error,
-		0,
-		buffer,
-		bufferSize,
-		NULL);
-
+	int result = FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_MAX_WIDTH_MASK, NULL, error, 0, buffer, bufferSize, NULL);
 	if (!result)
 	{
 		_snwprintf_s(buffer, bufferSize, bufferSize, L"Unknown error (%d)", error);
@@ -117,20 +102,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (currentPath) wcscat_s(replacePath, ARRAYSIZE(replacePath), currentPath);
 
 	_wputenv_s(L"PATH", replacePath);
-
-	_snwprintf_s(modulePath, ARRAYSIZE(modulePath), ARRAYSIZE(modulePath), L"%ls\\bin\\launcher.dll", baseDir);
+	_snwprintf_s(modulePath, ARRAYSIZE(modulePath), ARRAYSIZE(modulePath), L"%ls\\bin\\" LAUNCHER_LIB ".dll", baseDir);
 	LauncherMain_t LauncherMain = (LauncherMain_t)LoadModuleAndFindSymbol(modulePath, SYMBOL_NAME);
 	if (!LauncherMain) return 1;
 
-	//_snwprintf_s(modulePath, ARRAYSIZE(modulePath), ARRAYSIZE(modulePath), L"%ls\\csbuwq\\csbuwq.dll", baseDir);
-	//InstallGC_t InstallGC = (InstallGC_t)LoadModuleAndFindSymbol(modulePath, "InstallGC");
-	//if (!InstallGC) return 1;
+	_snwprintf_s(modulePath, ARRAYSIZE(modulePath), ARRAYSIZE(modulePath), L"%ls\\csgo_gc\\csgo_gc.dll", baseDir);
+	InstallGC_t InstallGC = (InstallGC_t)LoadModuleAndFindSymbol(modulePath, "InstallGC");
+	if (!InstallGC) return 1;
 
-//#if defined(DEDICATED)
-//	InstallGC(true);
-//#else
-//	InstallGC(false);
-//#endif
+#if defined(DEDICATED)
+	InstallGC(true);
+#else
+	InstallGC(false);
+#endif
 
 #if defined(DEDICATED)
 	return LauncherMain(hInstance, hPrevInstance, lpCmdLine, nShowCmd);

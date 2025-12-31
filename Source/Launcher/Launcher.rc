@@ -1,3 +1,2 @@
 #include <windows.h>
-
 IDI_APP_ICON ICON "game.ico"
