@@ -88,18 +88,6 @@ static void *LoadModuleAndFindSymbol(const wchar_t *absoluteModulePath, const ch
 	return function;
 }
 
-#ifndef GC_LIB_DIR
-#define GC_LIB_DIR "."
-#endif
-
-#ifndef GC_LIB_SUFFIX
-#define GC_LIB_SUFFIX "_client"
-#endif
-
-#ifndef GC_LIB_EXTENSION
-#define GC_LIB_EXTENSION ".dll"
-#endif
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 {
 	wchar_t baseDir[MAX_PATH];
@@ -113,14 +101,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return 1;
 	}
 
-	// rip off exe from the path
 	wchar_t *slash = wcsrchr(baseDir, '\\');
-	if (!slash) slash = baseDir; // what the fuck
+	if (!slash) return 1;
 	*slash = '\0';
 
 	SetCurrentDirectoryW(baseDir);
 
-	const wchar_t gameCoordLib[] = L"\\bin\\" GC_LIB_DIR "\\;";
+	const wchar_t gameCoordLib[] = L"\\bin\\;";
 	const int unsigned gameCoordLibSize = ARRAYSIZE(gameCoordLib);
 	wchar_t replacePath[2048] = {0};
 	wcscpy_s(replacePath, ARRAYSIZE(replacePath), baseDir);
@@ -131,19 +118,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	_wputenv_s(L"PATH", replacePath);
 
-	_snwprintf_s(modulePath, ARRAYSIZE(modulePath), ARRAYSIZE(modulePath), L"%ls\\bin\\" GC_LIB_DIR "\\" LAUNCHER_LIB /*GC_LIB_SUFFIX*/ GC_LIB_EXTENSION, baseDir);
-	LauncherMain_t LauncherMain = (LauncherMain_t) LoadModuleAndFindSymbol(modulePath, SYMBOL_NAME);
+	_snwprintf_s(modulePath, ARRAYSIZE(modulePath), ARRAYSIZE(modulePath), L"%ls\\bin\\launcher.dll", baseDir);
+	LauncherMain_t LauncherMain = (LauncherMain_t)LoadModuleAndFindSymbol(modulePath, SYMBOL_NAME);
 	if (!LauncherMain) return 1;
 
-	_snwprintf_s(modulePath, ARRAYSIZE(modulePath), ARRAYSIZE(modulePath), L"%ls\\csbuwq\\" GC_LIB_DIR "\\" "csbuwq" GC_LIB_EXTENSION, baseDir);
-	InstallGC_t InstallGC = (InstallGC_t) LoadModuleAndFindSymbol(modulePath, "InstallGC");
-	if (!InstallGC) return 1;
+	//_snwprintf_s(modulePath, ARRAYSIZE(modulePath), ARRAYSIZE(modulePath), L"%ls\\csbuwq\\csbuwq.dll", baseDir);
+	//InstallGC_t InstallGC = (InstallGC_t)LoadModuleAndFindSymbol(modulePath, "InstallGC");
+	//if (!InstallGC) return 1;
 
-#if defined(DEDICATED)
-	InstallGC(true);
-#else
-	InstallGC(false);
-#endif
+//#if defined(DEDICATED)
+//	InstallGC(true);
+//#else
+//	InstallGC(false);
+//#endif
 
 #if defined(DEDICATED)
 	return LauncherMain(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
