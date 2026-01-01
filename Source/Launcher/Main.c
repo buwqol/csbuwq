@@ -17,7 +17,7 @@ __declspec(dllexport) int RuntimeCheck(int i0, int i1) { return 0; }
 #define SYMBOL_NAME "DedicatedMain"
 typedef int (*LauncherMain_t)(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
 #else
-#define LAUNCHER_LIB "launcher"
+#define LAUNCHER_LIB "buwqcher"
 #define SYMBOL_NAME "LauncherMain"
 typedef int (*LauncherMain_t)(bool bSecure, HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
 #endif
@@ -46,10 +46,7 @@ static const wchar_t *LastErrorString()
 	int error = GetLastError();
 
 	int result = FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_MAX_WIDTH_MASK, NULL, error, 0, buffer, bufferSize, NULL);
-	if (!result)
-	{
-		_snwprintf_s(buffer, bufferSize, bufferSize, L"Unknown error (%d)", error);
-	}
+	if (!result) _snwprintf_s(buffer, bufferSize, bufferSize, L"Unknown error (%d)", error);
 
 	return buffer;
 }

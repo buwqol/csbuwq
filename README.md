@@ -16,3 +16,4 @@ My attempt at making a (working) CS:GO mod with all of the old features re-imple
 
 - [Mikko Kokko](https://github.com/mikkokko)'s [game coordinator](https://github.com/mikkokko/csgo_gc)
 - [_or_75](https://www.unknowncheats.me/forum/members/271234.html)'s [panorama code.pbin patch method](https://www.unknowncheats.me/forum/counterstrike-global-offensive/287000-panorama-checks-code-pbin.html)
+- [Kimi](https://github.com/excizik)'s [panorama code.pbin packer/unpacker](https://github.com/excizik/csgo-panorama-patcher)
